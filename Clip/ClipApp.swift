@@ -221,7 +221,7 @@ func returnFocusToPreviousApp() {
             settingsWindow?.delegate = self
         }
         
-        // 临时改变应用程序的激活策略
+        // 临��改变应用程序的激活策略
         NSApp.setActivationPolicy(.regular)
         
         settingsWindow?.makeKeyAndOrderFront(nil)
@@ -344,19 +344,19 @@ struct ClipboardHistoryView: View {
         copiedItemId = item.id
         
         // 提供视觉反馈，延迟关闭托盘
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-        print("延迟执行结束，准备关闭弹出窗口")
-        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
-            print("成功获取 AppDelegate，正在关闭弹出窗口")
-            appDelegate.closePopoverAndReturnFocus()
-        } else {
-            print("无法获取 AppDelegate，尝试使用 NSApplication 关闭窗口")
-            NSApplication.shared.keyWindow?.close()
-            self.returnFocusToPreviousApp()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // 将延迟时间改为 0.1 秒
+            print("延迟执行结束，准备关闭弹出窗口")
+            if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+                print("成功获取 AppDelegate，正在关闭弹出窗口")
+                appDelegate.closePopoverAndReturnFocus()
+            } else {
+                print("无法获取 AppDelegate，尝试使用 NSApplication 关闭窗口")
+                NSApplication.shared.keyWindow?.close()
+                self.returnFocusToPreviousApp()
+            }
+            self.isCopying = false
+            self.copiedItemId = nil // 重置复制状态
         }
-        self.isCopying = false
-        self.copiedItemId = nil // 重置复制状态
-    }
     }
 }
 
@@ -383,9 +383,15 @@ struct ClipboardItem: Identifiable, Equatable {
         print("开始处理剪贴板内容")
         print("剪贴板中的类型：\(pasteboard.types)")
         
-        // 尝试读取图片
+        // 尝试读取多个图片
+        if let images = NSImage.readMultipleImagesFromPasteboard(pasteboard) {
+            print("从剪贴板读取到多张图片，数量：\(images.count)")
+            return ClipboardItem(type: .multipleImages, content: images, timestamp: Date(), sourceApp: sourceApp)
+        }
+        
+        // 尝试读取单张图片
         if let image = NSImage.readFromPasteboard(pasteboard) {
-            print("从剪贴板读取到图片，尺寸：\(image.size)")
+            print("从剪贴板读取到单张图片，尺寸：\(image.size)")
             return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
         }
         
@@ -486,6 +492,25 @@ extension NSImage {
         return nil
     }
     
+    static func readMultipleImagesFromPasteboard(_ pasteboard: NSPasteboard) -> [NSImage]? {
+        // 尝试读取多个文件 URL
+        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
+            let images = urls.compactMap { NSImage(contentsOf: $0) }
+            if !images.isEmpty {
+                print("从多个文件 URL 读取图片")
+                return images
+            }
+        }
+        
+        // 尝试直接读取多个 NSImage
+        if let images = pasteboard.readObjects(forClasses: [NSImage.self], options: nil) as? [NSImage], !images.isEmpty {
+            print("直接读取多个 NSImage")
+            return images
+        }
+        
+        return nil
+    }
+    
     // 添加一个方法来创建缩略图
     func thumbnail(size: NSSize) -> NSImage {
         let thumbnailImage = NSImage(size: size)
@@ -511,7 +536,7 @@ extension NSImage {
 struct ClipboardItemView: View {
     let item: ClipboardItem
     let isSelected: Bool
-    let isCopied: Bool // 新增
+    let isCopied: Bool
     let action: () -> Void
     @State private var isHovered = false
     @State private var isPressed = false
@@ -541,9 +566,11 @@ struct ClipboardItemView: View {
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 80, height: 80)
-                                Text("+\(images.count - 1)")
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
+                                if images.count > 1 {
+                                    Text("+\(images.count - 1)")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
                             }
                         }
                     }
@@ -563,11 +590,6 @@ struct ClipboardItemView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.blue)
             }
-            
-            // if isCopied {
-            //     Image(systemName: "doc.on.doc.fill")
-            //         .foregroundColor(.green)
-            // }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
@@ -580,14 +602,14 @@ struct ClipboardItemView: View {
                 .stroke(isSelected ? Color.blue : Color.clear, lineWidth: 1.5)
         )
         .scaleEffect(isPressed ? 0.98 : 1.0)
-        .animation(.spring(response: 0.2, dampingFraction: 0.7, blendDuration: 0), value: isPressed)
+        .animation(.spring(response: 0.05, dampingFraction: 0.7, blendDuration: 0), value: isPressed)
         .onHover { hovering in
             isHovered = hovering
         }
         .onTapGesture {
             print("项目被点击")
             isPressed = true
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 isPressed = false
                 print("执行点击动作")
                 action()
