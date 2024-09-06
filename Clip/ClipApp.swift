@@ -347,10 +347,10 @@ struct ClipboardHistoryView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // 将延迟时间改为 0.1 秒
             print("延迟执行结束，准备关闭弹出窗口")
             if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
-                print("成功获取 AppDelegate，正在关闭弹出窗口")
+                print("成功获取 AppDelegate,正在关闭弹出窗口")
                 appDelegate.closePopoverAndReturnFocus()
             } else {
-                print("无法获取 AppDelegate，尝试使用 NSApplication 关闭窗口")
+                print("无法获取 AppDelegate,尝试使用 NSApplication 关闭窗口")
                 NSApplication.shared.keyWindow?.close()
                 self.returnFocusToPreviousApp()
             }
