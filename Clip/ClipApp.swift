@@ -130,6 +130,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = statusItem?.button {
             // 在显示弹出窗口之前，保存当前激活的应用
             previousActiveApp = NSWorkspace.shared.frontmostApplication
+            clipboardManager.selectedItemId = nil  // 重置选中状态
             popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             NSApp.activate(ignoringOtherApps: true)
         }
