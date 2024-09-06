@@ -1,14 +1,14 @@
 //
-//  CloneRaycastTests.swift
-//  CloneRaycastTests
+//  ClipTests.swift
+//  ClipTests
 //
 //  Created by GGG on 2024/9/6.
 //
 
 import XCTest
-@testable import CloneRaycast
+@testable import Clip
 
-final class CloneRaycastTests: XCTestCase {
+final class ClipTests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

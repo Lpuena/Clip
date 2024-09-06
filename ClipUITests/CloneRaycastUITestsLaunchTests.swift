@@ -1,13 +1,13 @@
 //
-//  CloneRaycastUITestsLaunchTests.swift
-//  CloneRaycastUITests
+//  ClipUITestsLaunchTests.swift
+//  ClipUITests
 //
 //  Created by GGG on 2024/9/6.
 //
 
 import XCTest
 
-final class CloneRaycastUITestsLaunchTests: XCTestCase {
+final class ClipUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

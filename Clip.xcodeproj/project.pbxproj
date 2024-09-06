@@ -8,65 +8,29 @@
 
 /* Begin PBXBuildFile section */
 		DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BA3262C8A938B007EC50B /* settingsView.swift */; };
-		DB928DE82C8A8E3E0064A5BF /* CloneRaycastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE72C8A8E3E0064A5BF /* CloneRaycastApp.swift */; };
+		DB928DE82C8A8E3E0064A5BF /* ClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */; };
 		DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE92C8A8E3E0064A5BF /* ContentView.swift */; };
 		DB928DEC2C8A8E3E0064A5BF /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DEB2C8A8E3E0064A5BF /* Item.swift */; };
 		DB928DEE2C8A8E400064A5BF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB928DED2C8A8E400064A5BF /* Assets.xcassets */; };
 		DB928DF12C8A8E400064A5BF /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB928DF02C8A8E400064A5BF /* Preview Assets.xcassets */; };
-		DB928DFC2C8A8E400064A5BF /* CloneRaycastTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DFB2C8A8E400064A5BF /* CloneRaycastTests.swift */; };
-		DB928E062C8A8E400064A5BF /* CloneRaycastUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928E052C8A8E400064A5BF /* CloneRaycastUITests.swift */; };
-		DB928E082C8A8E400064A5BF /* CloneRaycastUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928E072C8A8E400064A5BF /* CloneRaycastUITestsLaunchTests.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		DB928DF82C8A8E400064A5BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DB928DDC2C8A8E3E0064A5BF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DB928DE32C8A8E3E0064A5BF;
-			remoteInfo = CloneRaycast;
-		};
-		DB928E022C8A8E400064A5BF /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DB928DDC2C8A8E3E0064A5BF /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = DB928DE32C8A8E3E0064A5BF;
-			remoteInfo = CloneRaycast;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		DB6BA3262C8A938B007EC50B /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
-		DB928DE42C8A8E3E0064A5BF /* CloneRaycast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloneRaycast.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB928DE72C8A8E3E0064A5BF /* CloneRaycastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneRaycastApp.swift; sourceTree = "<group>"; };
+		DB928DE42C8A8E3E0064A5BF /* Clip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clip.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipApp.swift; sourceTree = "<group>"; };
 		DB928DE92C8A8E3E0064A5BF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		DB928DEB2C8A8E3E0064A5BF /* Item.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Item.swift; sourceTree = "<group>"; };
 		DB928DED2C8A8E400064A5BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB928DF02C8A8E400064A5BF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		DB928DF22C8A8E400064A5BF /* CloneRaycast.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = CloneRaycast.entitlements; sourceTree = "<group>"; };
-		DB928DF72C8A8E400064A5BF /* CloneRaycastTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CloneRaycastTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB928DFB2C8A8E400064A5BF /* CloneRaycastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneRaycastTests.swift; sourceTree = "<group>"; };
-		DB928E012C8A8E400064A5BF /* CloneRaycastUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CloneRaycastUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		DB928E052C8A8E400064A5BF /* CloneRaycastUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneRaycastUITests.swift; sourceTree = "<group>"; };
-		DB928E072C8A8E400064A5BF /* CloneRaycastUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneRaycastUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		DB928DF22C8A8E400064A5BF /* Clip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clip.entitlements; sourceTree = "<group>"; };
+		DB928DFB2C8A8E400064A5BF /* ClipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipTests.swift; sourceTree = "<group>"; };
+		DB928E052C8A8E400064A5BF /* ClipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipUITests.swift; sourceTree = "<group>"; };
+		DB928E072C8A8E400064A5BF /* ClipUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		DB928DE12C8A8E3E0064A5BF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB928DF42C8A8E400064A5BF /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB928DFE2C8A8E400064A5BF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -79,9 +43,9 @@
 		DB928DDB2C8A8E3E0064A5BF = {
 			isa = PBXGroup;
 			children = (
-				DB928DE62C8A8E3E0064A5BF /* CloneRaycast */,
-				DB928DFA2C8A8E400064A5BF /* CloneRaycastTests */,
-				DB928E042C8A8E400064A5BF /* CloneRaycastUITests */,
+				DB928DE62C8A8E3E0064A5BF /* Clip */,
+				DB928DFA2C8A8E400064A5BF /* ClipTests */,
+				DB928E042C8A8E400064A5BF /* ClipUITests */,
 				DB928DE52C8A8E3E0064A5BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -89,25 +53,23 @@
 		DB928DE52C8A8E3E0064A5BF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DB928DE42C8A8E3E0064A5BF /* CloneRaycast.app */,
-				DB928DF72C8A8E400064A5BF /* CloneRaycastTests.xctest */,
-				DB928E012C8A8E400064A5BF /* CloneRaycastUITests.xctest */,
+				DB928DE42C8A8E3E0064A5BF /* Clip.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		DB928DE62C8A8E3E0064A5BF /* CloneRaycast */ = {
+		DB928DE62C8A8E3E0064A5BF /* Clip */ = {
 			isa = PBXGroup;
 			children = (
-				DB928DE72C8A8E3E0064A5BF /* CloneRaycastApp.swift */,
+				DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */,
 				DB928DE92C8A8E3E0064A5BF /* ContentView.swift */,
 				DB928DEB2C8A8E3E0064A5BF /* Item.swift */,
 				DB928DED2C8A8E400064A5BF /* Assets.xcassets */,
-				DB928DF22C8A8E400064A5BF /* CloneRaycast.entitlements */,
+				DB928DF22C8A8E400064A5BF /* Clip.entitlements */,
 				DB928DEF2C8A8E400064A5BF /* Preview Content */,
 				DB6BA3262C8A938B007EC50B /* settingsView.swift */,
 			);
-			path = CloneRaycast;
+			path = Clip;
 			sourceTree = "<group>";
 		};
 		DB928DEF2C8A8E400064A5BF /* Preview Content */ = {
@@ -118,29 +80,29 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		DB928DFA2C8A8E400064A5BF /* CloneRaycastTests */ = {
+		DB928DFA2C8A8E400064A5BF /* ClipTests */ = {
 			isa = PBXGroup;
 			children = (
-				DB928DFB2C8A8E400064A5BF /* CloneRaycastTests.swift */,
+				DB928DFB2C8A8E400064A5BF /* ClipTests.swift */,
 			);
-			path = CloneRaycastTests;
+			path = ClipTests;
 			sourceTree = "<group>";
 		};
-		DB928E042C8A8E400064A5BF /* CloneRaycastUITests */ = {
+		DB928E042C8A8E400064A5BF /* ClipUITests */ = {
 			isa = PBXGroup;
 			children = (
-				DB928E052C8A8E400064A5BF /* CloneRaycastUITests.swift */,
-				DB928E072C8A8E400064A5BF /* CloneRaycastUITestsLaunchTests.swift */,
+				DB928E052C8A8E400064A5BF /* ClipUITests.swift */,
+				DB928E072C8A8E400064A5BF /* ClipUITestsLaunchTests.swift */,
 			);
-			path = CloneRaycastUITests;
+			path = ClipUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DB928DE32C8A8E3E0064A5BF /* CloneRaycast */ = {
+		DB928DE32C8A8E3E0064A5BF /* Clip */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB928E0B2C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "CloneRaycast" */;
+			buildConfigurationList = DB928E0B2C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "Clip" */;
 			buildPhases = (
 				DB928DE02C8A8E3E0064A5BF /* Sources */,
 				DB928DE12C8A8E3E0064A5BF /* Frameworks */,
@@ -150,46 +112,10 @@
 			);
 			dependencies = (
 			);
-			name = CloneRaycast;
-			productName = CloneRaycast;
-			productReference = DB928DE42C8A8E3E0064A5BF /* CloneRaycast.app */;
+			name = Clip;
+			productName = Clip;
+			productReference = DB928DE42C8A8E3E0064A5BF /* Clip.app */;
 			productType = "com.apple.product-type.application";
-		};
-		DB928DF62C8A8E400064A5BF /* CloneRaycastTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DB928E0E2C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "CloneRaycastTests" */;
-			buildPhases = (
-				DB928DF32C8A8E400064A5BF /* Sources */,
-				DB928DF42C8A8E400064A5BF /* Frameworks */,
-				DB928DF52C8A8E400064A5BF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DB928DF92C8A8E400064A5BF /* PBXTargetDependency */,
-			);
-			name = CloneRaycastTests;
-			productName = CloneRaycastTests;
-			productReference = DB928DF72C8A8E400064A5BF /* CloneRaycastTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		DB928E002C8A8E400064A5BF /* CloneRaycastUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = DB928E112C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "CloneRaycastUITests" */;
-			buildPhases = (
-				DB928DFD2C8A8E400064A5BF /* Sources */,
-				DB928DFE2C8A8E400064A5BF /* Frameworks */,
-				DB928DFF2C8A8E400064A5BF /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				DB928E032C8A8E400064A5BF /* PBXTargetDependency */,
-			);
-			name = CloneRaycastUITests;
-			productName = CloneRaycastUITests;
-			productReference = DB928E012C8A8E400064A5BF /* CloneRaycastUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
@@ -204,17 +130,9 @@
 					DB928DE32C8A8E3E0064A5BF = {
 						CreatedOnToolsVersion = 15.4;
 					};
-					DB928DF62C8A8E400064A5BF = {
-						CreatedOnToolsVersion = 15.4;
-						TestTargetID = DB928DE32C8A8E3E0064A5BF;
-					};
-					DB928E002C8A8E400064A5BF = {
-						CreatedOnToolsVersion = 15.4;
-						TestTargetID = DB928DE32C8A8E3E0064A5BF;
-					};
 				};
 			};
-			buildConfigurationList = DB928DDF2C8A8E3E0064A5BF /* Build configuration list for PBXProject "CloneRaycast" */;
+			buildConfigurationList = DB928DDF2C8A8E3E0064A5BF /* Build configuration list for PBXProject "Clip" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -223,13 +141,14 @@
 				Base,
 			);
 			mainGroup = DB928DDB2C8A8E3E0064A5BF;
+			packageReferences = (
+				DB6003C12C8AF6CF00D23370 /* XCRemoteSwiftPackageReference "swift-collections" */,
+			);
 			productRefGroup = DB928DE52C8A8E3E0064A5BF /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DB928DE32C8A8E3E0064A5BF /* CloneRaycast */,
-				DB928DF62C8A8E400064A5BF /* CloneRaycastTests */,
-				DB928E002C8A8E400064A5BF /* CloneRaycastUITests */,
+				DB928DE32C8A8E3E0064A5BF /* Clip */,
 			);
 		};
 /* End PBXProject section */
@@ -244,20 +163,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		DB928DF52C8A8E400064A5BF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB928DFF2C8A8E400064A5BF /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -268,41 +173,11 @@
 				DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */,
 				DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */,
 				DB928DEC2C8A8E3E0064A5BF /* Item.swift in Sources */,
-				DB928DE82C8A8E3E0064A5BF /* CloneRaycastApp.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB928DF32C8A8E400064A5BF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DB928DFC2C8A8E400064A5BF /* CloneRaycastTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		DB928DFD2C8A8E400064A5BF /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				DB928E082C8A8E400064A5BF /* CloneRaycastUITestsLaunchTests.swift in Sources */,
-				DB928E062C8A8E400064A5BF /* CloneRaycastUITests.swift in Sources */,
+				DB928DE82C8A8E3E0064A5BF /* ClipApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		DB928DF92C8A8E400064A5BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DB928DE32C8A8E3E0064A5BF /* CloneRaycast */;
-			targetProxy = DB928DF82C8A8E400064A5BF /* PBXContainerItemProxy */;
-		};
-		DB928E032C8A8E400064A5BF /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = DB928DE32C8A8E3E0064A5BF /* CloneRaycast */;
-			targetProxy = DB928E022C8A8E400064A5BF /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		DB928E092C8A8E400064A5BF /* Debug */ = {
@@ -427,24 +302,27 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CloneRaycast/CloneRaycast.entitlements;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = Clip/Clip.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"CloneRaycast/Preview Content\"";
+				CURRENT_PROJECT_VERSION = 1.0.2;
+				DEVELOPMENT_ASSET_PATHS = "\"Clip/Preview Content\"";
 				DEVELOPMENT_TEAM = YPZG7WYR87;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "-23.CloneRaycast";
+				MARKETING_VERSION = 1.0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "-23.Clip";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -455,106 +333,37 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				"ASSETCATALOG_COMPILER_APPICON_NAME[sdk=macosx*]" = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = CloneRaycast/CloneRaycast.entitlements;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
+				CODE_SIGN_ENTITLEMENTS = Clip/Clip.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"CloneRaycast/Preview Content\"";
+				CURRENT_PROJECT_VERSION = 1.0.2;
+				DEVELOPMENT_ASSET_PATHS = "\"Clip/Preview Content\"";
 				DEVELOPMENT_TEAM = YPZG7WYR87;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "-23.CloneRaycast";
+				MARKETING_VERSION = 1.0.2;
+				PRODUCT_BUNDLE_IDENTIFIER = "-23.Clip";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
 		};
-		DB928E0F2C8A8E400064A5BF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YPZG7WYR87;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "-23.CloneRaycastTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CloneRaycast.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CloneRaycast";
-			};
-			name = Debug;
-		};
-		DB928E102C8A8E400064A5BF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YPZG7WYR87;
-				GENERATE_INFOPLIST_FILE = YES;
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "-23.CloneRaycastTests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CloneRaycast.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CloneRaycast";
-			};
-			name = Release;
-		};
-		DB928E122C8A8E400064A5BF /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YPZG7WYR87;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "-23.CloneRaycastUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = CloneRaycast;
-			};
-			name = Debug;
-		};
-		DB928E132C8A8E400064A5BF /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = YPZG7WYR87;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = "-23.CloneRaycastUITests";
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TEST_TARGET_NAME = CloneRaycast;
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DB928DDF2C8A8E3E0064A5BF /* Build configuration list for PBXProject "CloneRaycast" */ = {
+		DB928DDF2C8A8E3E0064A5BF /* Build configuration list for PBXProject "Clip" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB928E092C8A8E400064A5BF /* Debug */,
@@ -563,7 +372,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB928E0B2C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "CloneRaycast" */ = {
+		DB928E0B2C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "Clip" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DB928E0C2C8A8E400064A5BF /* Debug */,
@@ -572,25 +381,18 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DB928E0E2C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "CloneRaycastTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DB928E0F2C8A8E400064A5BF /* Debug */,
-				DB928E102C8A8E400064A5BF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		DB928E112C8A8E400064A5BF /* Build configuration list for PBXNativeTarget "CloneRaycastUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				DB928E122C8A8E400064A5BF /* Debug */,
-				DB928E132C8A8E400064A5BF /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DB6003C12C8AF6CF00D23370 /* XCRemoteSwiftPackageReference "swift-collections" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-collections.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = DB928DDC2C8A8E3E0064A5BF /* Project object */;
 }

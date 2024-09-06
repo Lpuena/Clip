@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  CloneRaycast
+//  Clip
 //
 //  Created by GGG on 2024/9/6.
 //
@@ -33,32 +33,41 @@ struct ContentView: View {
                         }
                 )
             
+            // 主要内容区域
             VStack {
                 TextField("搜索...", text: $searchText)
                     .textFieldStyle(RoundedBorderTextFieldStyle())
                     .padding()
                 
-                List(items.filter { searchText.isEmpty ? true : $0.name.localizedCaseInsensitiveContains(searchText) }) { item in
-                    Text(item.name)
+                ScrollView {
+                    LazyVStack {
+                        ForEach(items.filter { searchText.isEmpty ? true : $0.name.localizedCaseInsensitiveContains(searchText) }) { item in
+                            Text(item.name)
+                                .padding(.vertical, 4)
+                        }
+                    }
                 }
             }
-            .frame(width: 480, height: 280)
+            .frame(maxHeight: .infinity)
+            
+            Divider()
+                .background(Color.gray)
+            
+            // 底部固定栏
+            HStack {
+                Image(systemName: "gear")
+                    .foregroundColor(.gray)
+                Spacer()
+                Text("Clipboard")
+                    .font(.headline)
+            }
+            .padding(.horizontal)
+            .frame(height: 40)
         }
-        .background(VisualEffectView().ignoresSafeArea())
+        .frame(width: 480, height: 320)
+        .background(Color(NSColor.windowBackgroundColor)) // 使用系统默认的窗口背景色
         .cornerRadius(10)
     }
-}
-
-struct VisualEffectView: NSViewRepresentable {
-    func makeNSView(context: Context) -> NSVisualEffectView {
-        let view = NSVisualEffectView()
-        view.blendingMode = .behindWindow
-        view.state = .active
-        view.material = .hudWindow
-        return view
-    }
-
-    func updateNSView(_ nsView: NSVisualEffectView, context: Context) {}
 }
 
 struct ContentView_Previews: PreviewProvider {
