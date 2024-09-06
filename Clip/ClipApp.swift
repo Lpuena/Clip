@@ -287,6 +287,7 @@ struct ClipboardHistoryView: View {
         // 提供视觉反馈并关闭托盘
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             print("Attempting to close popover from copyToClipboard")
+            self.clipboardManager.selectedItemId = nil  // 重置选中状态
             self.closePopover()
         }
     }
