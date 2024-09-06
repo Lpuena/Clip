@@ -19,6 +19,19 @@ struct ClipApp: App {
             EmptyView()
         }
         .environmentObject(clipboardManager)
+        .environment(\.appDelegate, appDelegate)
+    }
+}
+
+// 添加这个扩展来支持环境值
+struct AppDelegateKey: EnvironmentKey {
+    static let defaultValue: AppDelegate? = nil
+}
+
+extension EnvironmentValues {
+    var appDelegate: AppDelegate? {
+        get { self[AppDelegateKey.self] }
+        set { self[AppDelegateKey.self] = newValue }
     }
 }
 
@@ -64,14 +77,14 @@ class ClipboardManager: ObservableObject {
     }
 }
 
-class AppDelegate: NSObject, NSApplicationDelegate {
+class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     var statusItem: NSStatusItem?
     var popover: NSPopover?
     var timer: Timer?
     var settingsWindow: NSWindow?
     @ObservedObject var clipboardManager: ClipboardManager
     var eventMonitor: Any?
-    private var previousActiveApp: NSRunningApplication?
+    var previousActiveApp: NSRunningApplication?
     
     override init() {
         self.clipboardManager = ClipboardManager()
@@ -110,10 +123,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         // 添加全局事件监听器
         eventMonitor = NSEvent.addGlobalMonitorForEvents(matching: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
-            if let strongSelf = self, strongSelf.popover?.isShown == true {
+        if let strongSelf = self, strongSelf.popover?.isShown == true {
+            // 检查点击是否在弹出窗口外
+            if let popoverWindow = strongSelf.popover?.contentViewController?.view.window,
+               !NSPointInRect(NSEvent.mouseLocation, popoverWindow.frame) {
                 strongSelf.closePopover(event)
             }
         }
+    }
     }
     
     @objc func togglePopover(_ sender: AnyObject?) {
@@ -130,6 +147,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if let button = statusItem?.button {
             // 在显示弹出窗口之前，保存当前激活的应用
             previousActiveApp = NSWorkspace.shared.frontmostApplication
+            print("保存当前激活的应用：\(previousActiveApp?.localizedName ?? "未知应用")")
             clipboardManager.selectedItemId = nil  // 重置选中状态
             popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             NSApp.activate(ignoringOtherApps: true)
@@ -137,19 +155,34 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func closePopover(_ sender: Any?) {
-        print("Closing popover")
-        popover?.performClose(sender)
-        
-        // 在关闭弹出窗口后，将焦点返回到之前的应用
-        DispatchQueue.main.async { [weak self] in
-            if let previousApp = self?.previousActiveApp {
-                previousApp.activate(options: .activateIgnoringOtherApps)
-            }
-            self?.previousActiveApp = nil
+        print("AppDelegate 正在关闭弹出窗口")
+        if popover?.isShown == true {
+            popover?.performClose(sender)
+            print("弹出窗口已关闭")
+            returnFocusToPreviousApp()
+        } else {
+            print("弹出窗口已经是关闭状态")
         }
     }
+    func closePopoverAndReturnFocus() {
+    closePopover(nil)
+    returnFocusToPreviousApp()
+}
+
+func returnFocusToPreviousApp() {
+    DispatchQueue.main.async { [weak self] in
+        if let previousApp = self?.previousActiveApp {
+            previousApp.activate(options: .activateIgnoringOtherApps)
+            print("焦点已返回到之前的应用：\(previousApp.localizedName ?? "未知应用")")
+        } else {
+            print("没有之前的应用信息，无法返回焦点")
+        }
+        self?.previousActiveApp = nil
+    }
+}
     
     func startMonitoringClipboard() {
+        timer?.invalidate() // 确保之前的定时器被停止
         timer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] timer in
             let currentCount = NSPasteboard.general.changeCount
             if currentCount != UserDefaults.standard.integer(forKey: "LastPasteboardCount") {
@@ -224,15 +257,23 @@ struct ClipboardHistoryView: View {
     @AppStorage("clipboardHistoryCount") private var clipboardHistoryCount: Int = 20
     var openSettings: () -> Void
     @State private var scrollProxy: ScrollViewProxy?
+    @State private var isCopying = false
     
+    @Environment(\.appDelegate) private var appDelegate
+    
+    @State private var copiedItemId: UUID?
+
     var body: some View {
         VStack(spacing: 0) {
             ScrollViewReader { proxy in
                 List {
                     ForEach(clipboardManager.clipboardItems, id: \.id) { item in
-                        ClipboardItemView(item: item, isSelected: clipboardManager.selectedItemId == item.id) {
-                            copyToClipboard(item)
-                        }
+                        ClipboardItemView(
+                            item: item,
+                            isSelected: clipboardManager.selectedItemId == item.id,
+                            isCopied: copiedItemId == item.id,
+                            action: { copyToClipboard(item) }
+                        )
                         .id(item.id)
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(Color.clear)
@@ -273,24 +314,49 @@ struct ClipboardHistoryView: View {
             }
         }
         .onChange(of: clipboardHistoryCount) { _ in
-            clipboardManager.trimHistory() // ���新的公共方法
+            clipboardManager.trimHistory() // 新的公共方法
+        }
+    }
+
+    func returnFocusToPreviousApp() {
+        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            appDelegate.returnFocusToPreviousApp()
+        } else {
+            print("无法获取 AppDelegate，尝试直接返回焦点")
+            if let previousApp = NSWorkspace.shared.runningApplications.first(where: { $0.isActive }) {
+                previousApp.activate(options: .activateIgnoringOtherApps)
+                print("焦点已返回到之前的应用：\(previousApp.localizedName ?? "未知应用")")
+            } else {
+                print("无法找到之前的应用，无法返回焦点")
+            }
         }
     }
     
-    func closePopover() {
-        NSApplication.shared.keyWindow?.close()
-    }
-
     func copyToClipboard(_ item: ClipboardItem) {
+        guard !isCopying else { return }
+        isCopying = true
+        
+        print("开始复制到剪贴板")
         clipboardManager.selectItem(item)
         item.copyToPasteboard()
         
-        // 提供视觉反馈并关闭托盘
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            print("Attempting to close popover from copyToClipboard")
-            self.clipboardManager.selectedItemId = nil  // 重置选中状态
-            self.closePopover()
+        // 设置已复制项目的 ID 以显示视觉反馈
+        copiedItemId = item.id
+        
+        // 提供视觉反馈，延迟关闭托盘
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+        print("延迟执行结束，准备关闭弹出窗口")
+        if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
+            print("成功获取 AppDelegate，正在关闭弹出窗口")
+            appDelegate.closePopoverAndReturnFocus()
+        } else {
+            print("无法获取 AppDelegate，尝试使用 NSApplication 关闭窗口")
+            NSApplication.shared.keyWindow?.close()
+            self.returnFocusToPreviousApp()
         }
+        self.isCopying = false
+        self.copiedItemId = nil // 重置复制状态
+    }
     }
 }
 
@@ -315,35 +381,12 @@ struct ClipboardItem: Identifiable, Equatable {
         let pasteboard = NSPasteboard.general
         
         print("开始处理剪贴板内容")
+        print("剪贴板中的类型：\(pasteboard.types)")
         
-        // 首先尝试直接从剪贴板读取图片内容
-        if let images = NSImage.readFromPasteboard(pasteboard) {
-            print("从剪板直接读取到 \(images.count) 张图片")
-            if images.count > 1 {
-                return ClipboardItem(type: .multipleImages, content: images, timestamp: Date(), sourceApp: sourceApp)
-            } else if let image = images.first {
-                return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
-            }
-        }
-        
-        // 如果没有直接的图片内容，尝试读取文件 URL
-        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
-            let imageUrls = urls.filter { url in
-                let fileExtension = url.pathExtension.lowercased()
-                let imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff","avif"]
-                return imageExtensions.contains(fileExtension)
-            }
-            
-            if !imageUrls.isEmpty {
-                let images = imageUrls.compactMap { NSImage(contentsOf: $0) }
-                if images.count > 1 {
-                    print("创建多图片项，共 \(images.count) 张")
-                    return ClipboardItem(type: .multipleImages, content: images, timestamp: Date(), sourceApp: sourceApp)
-                } else if let image = images.first {
-                    print("创建单图片项")
-                    return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
-                }
-            }
+        // 尝试读取图片
+        if let image = NSImage.readFromPasteboard(pasteboard) {
+            print("从剪贴板读取到图片，尺寸：\(image.size)")
+            return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
         }
         
         // 尝试读取文本
@@ -410,10 +453,36 @@ struct ClipboardItem: Identifiable, Equatable {
 
 // 修改 NSImage 扩展
 extension NSImage {
-    static func readFromPasteboard(_ pasteboard: NSPasteboard) -> [NSImage]? {
-        if let images = pasteboard.readObjects(forClasses: [NSImage.self], options: nil) as? [NSImage] {
-            return images
+    static func readFromPasteboard(_ pasteboard: NSPasteboard) -> NSImage? {
+        // 尝试读取文件 URL
+        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL],
+           let firstURL = urls.first,
+           let image = NSImage(contentsOf: firstURL) {
+            print("从文件 URL 读取图片")
+            return image
         }
+        
+        // 尝试读取 TIFF 数据
+        if let tiffData = pasteboard.data(forType: .tiff),
+           let image = NSImage(data: tiffData) {
+            print("从 TIFF 数据读取图片")
+            return image
+        }
+        
+        // 尝试读取 PNG 数据
+        if let pngData = pasteboard.data(forType: .png),
+           let image = NSImage(data: pngData) {
+            print("从 PNG 数据读取图片")
+            return image
+        }
+        
+        // 尝试直接读取 NSImage
+        if let image = pasteboard.readObjects(forClasses: [NSImage.self], options: nil)?.first as? NSImage {
+            print("直接读取 NSImage")
+            return image
+        }
+        
+        print("无法读取图片")
         return nil
     }
     
@@ -442,6 +511,7 @@ extension NSImage {
 struct ClipboardItemView: View {
     let item: ClipboardItem
     let isSelected: Bool
+    let isCopied: Bool // 新增
     let action: () -> Void
     @State private var isHovered = false
     @State private var isPressed = false
@@ -459,7 +529,7 @@ struct ClipboardItemView: View {
                         }
                     case .image:
                         if let image = item.content as? NSImage {
-                            Image(nsImage: image.thumbnail(size: NSSize(width: 80, height: 80)))
+                            Image(nsImage: image)
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
                                 .frame(width: 80, height: 80)
@@ -467,7 +537,7 @@ struct ClipboardItemView: View {
                     case .multipleImages:
                         if let images = item.content as? [NSImage], let firstImage = images.first {
                             HStack {
-                                Image(nsImage: firstImage.thumbnail(size: NSSize(width: 80, height: 80)))
+                                Image(nsImage: firstImage)
                                     .resizable()
                                     .aspectRatio(contentMode: .fit)
                                     .frame(width: 80, height: 80)
@@ -493,6 +563,11 @@ struct ClipboardItemView: View {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundColor(.blue)
             }
+            
+            // if isCopied {
+            //     Image(systemName: "doc.on.doc.fill")
+            //         .foregroundColor(.green)
+            // }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
@@ -510,9 +585,11 @@ struct ClipboardItemView: View {
             isHovered = hovering
         }
         .onTapGesture {
+            print("项目被点击")
             isPressed = true
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                 isPressed = false
+                print("执行点击动作")
                 action()
             }
         }
