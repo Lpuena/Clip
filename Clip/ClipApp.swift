@@ -26,17 +26,29 @@ class ClipboardManager: ObservableObject {
     @Published var clipboardItems: [ClipboardItem] = []
     @AppStorage("clipboardHistoryCount") private var clipboardHistoryCount: Int = 20
     @AppStorage("showSourceInHistory") var showSourceInHistory: Bool = true
+    @Published var selectedItemId: UUID?
+
+    func selectItem(_ item: ClipboardItem) {
+        selectedItemId = item.id
+    }
 
     func clearHistory() {
         clipboardItems.removeAll()
     }
 
     func updateClipboardHistory(sourceApp: (name: String, bundleIdentifier: String)? = nil) {
+        print("开始更新剪贴板历史")
         if let newItem = ClipboardItem.fromPasteboard(sourceApp: sourceApp) {
+            print("创建了新的剪贴板项：\(newItem.type)")
             if !clipboardItems.contains(where: { $0.isContentEqual(to: newItem) }) {
                 clipboardItems.insert(newItem, at: 0)
                 trimClipboardItems()
+                print("新项目已添加到历史")
+            } else {
+                print("新项目与现有项目重复，未添加")
             }
+        } else {
+            print("无法创建新的剪贴板项")
         }
     }
 
@@ -59,6 +71,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var settingsWindow: NSWindow?
     @ObservedObject var clipboardManager: ClipboardManager
     var eventMonitor: Any?
+    private var previousActiveApp: NSRunningApplication?
     
     override init() {
         self.clipboardManager = ClipboardManager()
@@ -66,7 +79,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // 创建态栏图标
+        // 创态栏图标
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem?.button {
             button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clipboard History")
@@ -89,7 +102,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             popoverContentView.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
         }
         
-        // 开始监听剪贴板变化
+        // 开监听剪贴板变化
         startMonitoringClipboard()
         
         // 保持应用在后台运行
@@ -115,6 +128,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func showPopover(_ sender: Any?) {
         if let button = statusItem?.button {
+            // 在显示弹出窗口之前，保存当前激活的应用
+            previousActiveApp = NSWorkspace.shared.frontmostApplication
             popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
             NSApp.activate(ignoringOtherApps: true)
         }
@@ -123,6 +138,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func closePopover(_ sender: Any?) {
         print("Closing popover")
         popover?.performClose(sender)
+        
+        // 在关闭弹出窗口后，将焦点返回到之前的应用
+        DispatchQueue.main.async { [weak self] in
+            if let previousApp = self?.previousActiveApp {
+                previousApp.activate(options: .activateIgnoringOtherApps)
+            }
+            self?.previousActiveApp = nil
+        }
     }
     
     func startMonitoringClipboard() {
@@ -197,7 +220,6 @@ extension AppDelegate: NSWindowDelegate {
 
 struct ClipboardHistoryView: View {
     @EnvironmentObject var clipboardManager: ClipboardManager
-    @State private var selectedItem: ClipboardItem?
     @AppStorage("clipboardHistoryCount") private var clipboardHistoryCount: Int = 20
     var openSettings: () -> Void
     @State private var scrollProxy: ScrollViewProxy?
@@ -207,7 +229,7 @@ struct ClipboardHistoryView: View {
             ScrollViewReader { proxy in
                 List {
                     ForEach(clipboardManager.clipboardItems, id: \.id) { item in
-                        ClipboardItemView(item: item, isSelected: selectedItem == item) {
+                        ClipboardItemView(item: item, isSelected: clipboardManager.selectedItemId == item.id) {
                             copyToClipboard(item)
                         }
                         .id(item.id)
@@ -250,7 +272,7 @@ struct ClipboardHistoryView: View {
             }
         }
         .onChange(of: clipboardHistoryCount) { _ in
-            clipboardManager.trimHistory() // 使用新的公共方法
+            clipboardManager.trimHistory() // ���新的公共方法
         }
     }
     
@@ -259,14 +281,11 @@ struct ClipboardHistoryView: View {
     }
 
     func copyToClipboard(_ item: ClipboardItem) {
+        clipboardManager.selectItem(item)
         item.copyToPasteboard()
-        selectedItem = item
         
         // 提供视觉反馈并关闭托盘
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            selectedItem = nil
-            
-            // 直接关闭弹出窗口
             print("Attempting to close popover from copyToClipboard")
             self.closePopover()
         }
@@ -283,6 +302,7 @@ struct ClipboardItem: Identifiable, Equatable {
     enum ItemType {
         case text
         case image
+        case multipleImages
     }
     
     static func == (lhs: ClipboardItem, rhs: ClipboardItem) -> Bool {
@@ -292,40 +312,45 @@ struct ClipboardItem: Identifiable, Equatable {
     static func fromPasteboard(sourceApp: (name: String, bundleIdentifier: String)? = nil) -> ClipboardItem? {
         let pasteboard = NSPasteboard.general
         
-        // 检查是否是文件或文件夹
-        if let types = pasteboard.types, types.contains(.fileURL) {
-            if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
-                for url in urls {
-                    if url.hasDirectoryPath {
-                        // 如果是文件夹，不添加到剪贴板历史
-                        return nil
-                    }
-                    
-                    let fileExtension = url.pathExtension.lowercased()
-                    let imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff"]
-                    
-                    if imageExtensions.contains(fileExtension) {
-                        // 如果是图片文件，创建图片项
-                        if let image = NSImage(contentsOf: url) {
-                            return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
-                        }
-                    }
+        print("开始处理剪贴板内容")
+        
+        // 首先尝试直接从剪贴板读取图片内容
+        if let images = NSImage.readFromPasteboard(pasteboard) {
+            print("从剪板直接读取到 \(images.count) 张图片")
+            if images.count > 1 {
+                return ClipboardItem(type: .multipleImages, content: images, timestamp: Date(), sourceApp: sourceApp)
+            } else if let image = images.first {
+                return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
+            }
+        }
+        
+        // 如果没有直接的图片内容，尝试读取文件 URL
+        if let urls = pasteboard.readObjects(forClasses: [NSURL.self], options: nil) as? [URL] {
+            let imageUrls = urls.filter { url in
+                let fileExtension = url.pathExtension.lowercased()
+                let imageExtensions = ["jpg", "jpeg", "png", "gif", "bmp", "tiff","avif"]
+                return imageExtensions.contains(fileExtension)
+            }
+            
+            if !imageUrls.isEmpty {
+                let images = imageUrls.compactMap { NSImage(contentsOf: $0) }
+                if images.count > 1 {
+                    print("创建多图片项，共 \(images.count) 张")
+                    return ClipboardItem(type: .multipleImages, content: images, timestamp: Date(), sourceApp: sourceApp)
+                } else if let image = images.first {
+                    print("创建单图片项")
+                    return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
                 }
             }
-            // 如果是非图片文件，不添加到剪贴板历史
-            return nil
         }
         
-        // 尝试读取图片
-        if let image = NSImage(pasteboard: pasteboard) {
-            return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
-        }
-        
-        // 尝试读取本
+        // 尝试读取文本
         if let string = pasteboard.string(forType: .string) {
+            print("创建文本项")
             return ClipboardItem(type: .text, content: string, timestamp: Date(), sourceApp: sourceApp)
         }
         
+        print("未能识别剪贴板内容")
         return nil
     }
     
@@ -341,6 +366,10 @@ struct ClipboardItem: Identifiable, Equatable {
             if let image = content as? NSImage {
                 pasteboard.writeObjects([image])
             }
+        case .multipleImages:
+            if let images = content as? [NSImage] {
+                pasteboard.writeObjects(images)
+            }
         }
     }
     
@@ -354,12 +383,57 @@ struct ClipboardItem: Identifiable, Equatable {
         case .image:
             if let selfImage = self.content as? NSImage,
                let otherImage = other.content as? NSImage,
-               let selfData = selfImage.tiffRepresentation,
-               let otherData = otherImage.tiffRepresentation {
+               let selfData = selfImage.pngData,
+               let otherData = otherImage.pngData {
                 return selfData == otherData
             }
             return false
+        case .multipleImages:
+            if let selfImages = self.content as? [NSImage],
+               let otherImages = other.content as? [NSImage],
+               selfImages.count == otherImages.count {
+                for (selfImage, otherImage) in zip(selfImages, otherImages) {
+                    if let selfData = selfImage.pngData,
+                       let otherData = otherImage.pngData,
+                       selfData != otherData {
+                        return false
+                    }
+                }
+                return true
+            }
+            return false
         }
+    }
+}
+
+// 修改 NSImage 扩展
+extension NSImage {
+    static func readFromPasteboard(_ pasteboard: NSPasteboard) -> [NSImage]? {
+        if let images = pasteboard.readObjects(forClasses: [NSImage.self], options: nil) as? [NSImage] {
+            return images
+        }
+        return nil
+    }
+    
+    // 添加一个方法来创建缩略图
+    func thumbnail(size: NSSize) -> NSImage {
+        let thumbnailImage = NSImage(size: size)
+        thumbnailImage.lockFocus()
+        defer { thumbnailImage.unlockFocus() }
+        
+        NSGraphicsContext.current?.imageInterpolation = .high
+        if let cgImage = self.cgImage(forProposedRect: nil, context: nil, hints: nil) {
+            let rect = NSRect(origin: .zero, size: size)
+            NSGraphicsContext.current?.cgContext.draw(cgImage, in: rect)
+        }
+        
+        return thumbnailImage
+    }
+    
+    var pngData: Data? {
+        guard let tiffRepresentation = self.tiffRepresentation,
+              let bitmapImage = NSBitmapImageRep(data: tiffRepresentation) else { return nil }
+        return bitmapImage.representation(using: .png, properties: [:])
     }
 }
 
@@ -383,10 +457,22 @@ struct ClipboardItemView: View {
                         }
                     case .image:
                         if let image = item.content as? NSImage {
-                            Image(nsImage: image)
+                            Image(nsImage: image.thumbnail(size: NSSize(width: 80, height: 80)))
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
-                                .frame(height: 40)
+                                .frame(width: 80, height: 80)
+                        }
+                    case .multipleImages:
+                        if let images = item.content as? [NSImage], let firstImage = images.first {
+                            HStack {
+                                Image(nsImage: firstImage.thumbnail(size: NSSize(width: 80, height: 80)))
+                                    .resizable()
+                                    .aspectRatio(contentMode: .fit)
+                                    .frame(width: 80, height: 80)
+                                Text("+\(images.count - 1)")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
                         }
                     }
                 }
@@ -401,10 +487,10 @@ struct ClipboardItemView: View {
             
             Spacer()
             
-            Image(systemName: "checkmark.circle.fill")
-                .foregroundColor(.blue)
-                .opacity(isSelected ? 1 : 0)
-                .frame(width: 20)
+            if isSelected {
+                Image(systemName: "checkmark.circle.fill")
+                    .foregroundColor(.blue)
+            }
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
@@ -422,12 +508,18 @@ struct ClipboardItemView: View {
             isHovered = hovering
         }
         .onTapGesture {
-            action()
+            isPressed = true
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                isPressed = false
+                action()
+            }
         }
     }
     
     private var backgroundColor: Color {
-        if isHovered {
+        if isSelected {
+            return Color.blue.opacity(0.1)
+        } else if isHovered {
             return Color.gray.opacity(0.15)
         } else {
             return Color.clear
