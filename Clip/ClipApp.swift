@@ -66,7 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func applicationDidFinishLaunching(_ notification: Notification) {
-        // 创建状态栏图标
+        // 创建态栏图标
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem?.button {
             button.image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clipboard History")
@@ -121,6 +121,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func closePopover(_ sender: Any?) {
+        print("Closing popover")
         popover?.performClose(sender)
     }
     
@@ -253,20 +254,21 @@ struct ClipboardHistoryView: View {
         }
     }
     
+    func closePopover() {
+        NSApplication.shared.keyWindow?.close()
+    }
+
     func copyToClipboard(_ item: ClipboardItem) {
         item.copyToPasteboard()
         selectedItem = item
         
-        // 提供视觉反馈
+        // 提供视觉反馈并关闭托盘
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             selectedItem = nil
             
-            // 关闭弹出窗口
-            if let appDelegate = NSApplication.shared.delegate as? AppDelegate {
-                DispatchQueue.main.async {
-                    appDelegate.popover?.performClose(nil)
-                }
-            }
+            // 直接关闭弹出窗口
+            print("Attempting to close popover from copyToClipboard")
+            self.closePopover()
         }
     }
 }
@@ -319,7 +321,7 @@ struct ClipboardItem: Identifiable, Equatable {
             return ClipboardItem(type: .image, content: image, timestamp: Date(), sourceApp: sourceApp)
         }
         
-        // 尝试读取文本
+        // 尝试读取本
         if let string = pasteboard.string(forType: .string) {
             return ClipboardItem(type: .text, content: string, timestamp: Date(), sourceApp: sourceApp)
         }
@@ -419,20 +421,9 @@ struct ClipboardItemView: View {
         .onHover { hovering in
             isHovered = hovering
         }
-        .gesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    if !isPressed {
-                        isPressed = true
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            action()
-                        }
-                    }
-                }
-                .onEnded { _ in
-                    isPressed = false
-                }
-        )
+        .onTapGesture {
+            action()
+        }
     }
     
     private var backgroundColor: Color {
