@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BA3262C8A938B007EC50B /* settingsView.swift */; };
 		DB928DE82C8A8E3E0064A5BF /* CloneRaycastApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE72C8A8E3E0064A5BF /* CloneRaycastApp.swift */; };
 		DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE92C8A8E3E0064A5BF /* ContentView.swift */; };
 		DB928DEC2C8A8E3E0064A5BF /* Item.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DEB2C8A8E3E0064A5BF /* Item.swift */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DB6BA3262C8A938B007EC50B /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
 		DB928DE42C8A8E3E0064A5BF /* CloneRaycast.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CloneRaycast.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB928DE72C8A8E3E0064A5BF /* CloneRaycastApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloneRaycastApp.swift; sourceTree = "<group>"; };
 		DB928DE92C8A8E3E0064A5BF /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -103,6 +105,7 @@
 				DB928DED2C8A8E400064A5BF /* Assets.xcassets */,
 				DB928DF22C8A8E400064A5BF /* CloneRaycast.entitlements */,
 				DB928DEF2C8A8E400064A5BF /* Preview Content */,
+				DB6BA3262C8A938B007EC50B /* settingsView.swift */,
 			);
 			path = CloneRaycast;
 			sourceTree = "<group>";
@@ -263,6 +266,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */,
+				DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */,
 				DB928DEC2C8A8E3E0064A5BF /* Item.swift in Sources */,
 				DB928DE82C8A8E3E0064A5BF /* CloneRaycastApp.swift in Sources */,
 			);
