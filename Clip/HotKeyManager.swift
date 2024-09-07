@@ -35,6 +35,13 @@ class HotKeyManager: ObservableObject {
         updateHotKey()
     }
     
+    func setNewHotKey(with keyCombo: KeyCombo) {
+        hotKey = HotKey(keyCombo: keyCombo)
+        isRecording = false
+        updateHotKeyString()
+        updateHotKey()
+    }
+    
     func resetHotKey() {
         hotKey = nil
         hotKeyString = "未设置"

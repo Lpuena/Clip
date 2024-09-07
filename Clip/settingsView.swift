@@ -101,11 +101,15 @@ struct SettingsView: View {
             HStack {
                 Text(hotKeyManager.hotKeyString)
                     .padding(6)
-                    .background(Color.secondary.opacity(0.2))
+                    .background(Color(NSColor.systemGray.withAlphaComponent(0.2)))
                     .cornerRadius(4)
                 Spacer()
                 Button("修改") {
                     hotKeyManager.isRecording = true
+                }
+                .buttonStyle(BorderedButtonStyle())
+                Button("重置") {
+                    resetHotKeyToDefault()
                 }
                 .buttonStyle(BorderedButtonStyle())
             }
@@ -172,6 +176,12 @@ struct SettingsView: View {
                 print("通知请求已添加")
             }
         }
+    }
+    
+    private func resetHotKeyToDefault() {
+        // 设置默认快捷键为 F4
+        let defaultKeyCombo = KeyCombo(key: .f4)
+        hotKeyManager.setNewHotKey(with: defaultKeyCombo)
     }
 }
 
