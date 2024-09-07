@@ -71,21 +71,21 @@ struct ClipboardItemView: View {
                         .foregroundColor(colorScheme == .dark ? .white : .primary)
                 }
             case .image:
-                if let image = item.content as? NSImage {
-                    Image(nsImage: image)
+                if let imageWrapper = item.content as? ImageWrapper {
+                    Image(nsImage: imageWrapper.image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 60)
                 }
             case .multipleImages:
-                if let images = item.content as? [NSImage], let firstImage = images.first {
+                if let imageWrappers = item.content as? [ImageWrapper], let firstImageWrapper = imageWrappers.first {
                     HStack {
-                        Image(nsImage: firstImage)
+                        Image(nsImage: firstImageWrapper.image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 60)
-                        if images.count > 1 {
-                            Text("+\(images.count - 1)")
+                        if imageWrappers.count > 1 {
+                            Text("+\(imageWrappers.count - 1)")
                                 .font(.caption)
                                 .foregroundColor(.secondary)
                         }
