@@ -33,7 +33,12 @@ struct ClipApp: App {
             EmptyView()
         }
         .commands {
-            // 移除所有默认的菜单项
+            CommandGroup(replacing: .appSettings) {
+                Button("设置") {
+                    appDelegate.openSettings()
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
             CommandGroup(replacing: .appInfo, addition: {})
             CommandGroup(replacing: .systemServices, addition: {})
             CommandGroup(replacing: .newItem, addition: {})
@@ -221,7 +226,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
         })
         .environmentObject(clipboardManager)
         
-        // 使用可选绑定��安全地访问 currentAppearance
+        // 使用可选绑定安全地访问 currentAppearance
         if let currentAppearance = currentAppearance {
             contentView.environment(\.colorScheme, currentAppearance.name == .darkAqua ? .dark : .light)
         }
