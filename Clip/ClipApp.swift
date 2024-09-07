@@ -116,7 +116,22 @@ class ClipboardManager: ObservableObject {
     @AppStorage("clipboardHistoryCount") private var clipboardHistoryCount: Int = 20
     @AppStorage("showSourceInHistory") var showSourceInHistory: Bool = true
     @Published var selectedItemId: UUID?
-
+    private var imageCache = NSCache<NSString, NSImage>()
+    
+    // 在适当的地方使用缓存
+    func getImage(for item: ClipboardItem) -> NSImage? {
+        if case .image = item.type, let wrapper = item.content as? ImageWrapper {
+            if let cachedImage = imageCache.object(forKey: item.id.uuidString as NSString) {
+                return cachedImage
+            }
+            if let image = wrapper.image {
+                imageCache.setObject(image, forKey: item.id.uuidString as NSString)
+                return image
+            }
+        }
+        return nil
+    }
+    
     init() {
         print("ClipboardManager 初始化")
         // 如果需要，在这里添加任何必要的初始化代码
@@ -127,7 +142,36 @@ class ClipboardManager: ObservableObject {
     }
 
     func clearHistory() {
-        clipboardItems.removeAll()
+        for item in clipboardItems {
+            if case .image = item.type, let imageWrapper = item.content as? ImageWrapper {
+                // 清除图像缓存
+                imageCache.removeObject(forKey: item.id.uuidString as NSString)
+            }
+        }
+        clipboardItems.removeAll(keepingCapacity: false)
+        
+        // 强制进行内存回收
+        autoreleasepool {
+            // 这里不需要额外的代码
+        }
+        
+        // 模拟内存警告
+        #if DEBUG
+        DispatchQueue.main.async {
+            NSApp.performSelector(onMainThread: #selector(NSApplication.sendEvent(_:)), with: nil, waitUntilDone: false)
+        }
+        #endif
+    }
+
+    func clearUnusedImageResources() {
+        for (index, item) in clipboardItems.enumerated() {
+            if case .image = item.type, let imageWrapper = item.content as? ImageWrapper {
+                if !NSPasteboard.general.canReadItem(withDataConformingToTypes: [NSPasteboard.PasteboardType.tiff.rawValue]) {
+                    // 如果剪贴板中不再包含这个图像，则移除它
+                    clipboardItems.remove(at: index)
+                }
+            }
+        }
     }
 
     func updateClipboardHistory(sourceApp: (name: String, bundleIdentifier: String)? = nil) {
@@ -144,9 +188,11 @@ class ClipboardManager: ObservableObject {
         } else {
             print("无法创建新的剪贴板项")
         }
+        
+        clearUnusedImageResources()
     }
 
-    // 新增的公共方法
+    // 新的公共方法
     func trimHistory() {
         trimClipboardItems()
     }
@@ -160,6 +206,14 @@ class ClipboardManager: ObservableObject {
     func selectAndCopyItem(_ item: ClipboardItem) {
         selectItem(item)
         item.copyToPasteboard()
+    }
+
+    func periodicCleanup() {
+        let maxItems = 100 // 或者其他合适的数字
+        if clipboardItems.count > maxItems {
+            clipboardItems = Array(clipboardItems.prefix(maxItems))
+        }
+        // 可以在这里添加其他清理逻辑
     }
 }
 
@@ -180,11 +234,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
     @Published var isPopoverShown: Bool = false
 
     override init() {
-        print("AppDelegate ���始化始")
+        print("AppDelegate 初始化开始")
         self.clipboardManager = ClipboardManager()
         self.hotKeyManager = HotKeyManager(hotKey: HotKey(keyCombo: KeyCombo(key: .f4)), keyDownHandler: nil)
         print("ClipboardManager 和 HotKeyManager 初始化完成")
+        
         super.init()
+        
         print("AppDelegate super.init() 完成")
         
         // 在 super.init() 之后设置 keyDownHandler
@@ -361,7 +417,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
                 self.returnFocusToPreviousApp()
             }
         } else {
-            print("弹出窗口已经是关闭状态或不存在")
+            print("弹出窗已经是关闭状态或不在")
         }
     }
 
@@ -372,7 +428,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
                 previousApp.activate(options: .activateIgnoringOtherApps)
                 print("焦点已返回到之前的应用：\(previousApp.localizedName ?? "未知应用")")
             } else {
-                print("没有之前的应用信息，无法返回���点")
+                print("没有之前的应用信息，无法返回焦点")
             }
             self.previousActiveApp = nil
         }
@@ -463,6 +519,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
 
     func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
         completionHandler([.banner, .sound])
+    }
+
+    func applicationDidReceiveMemoryWarning(_ notification: Notification) {
+        clipboardManager.trimHistory()
+        // 其他资源清理...
     }
 }
 
