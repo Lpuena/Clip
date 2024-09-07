@@ -150,7 +150,24 @@ struct SettingsView: View {
     
     private func setLaunchAtLogin(_ enable: Bool) {
         let bundleIdentifier = Bundle.main.bundleIdentifier ?? "com.yourcompany.Clip"
-        SMLoginItemSetEnabled(bundleIdentifier as CFString, enable)
+        do {
+            if enable {
+                print("尝试注册开机启动...")
+                try SMAppService.mainApp.register()
+                print("开机启动注册成功")
+            } else {
+                print("尝试取消注册开机启动...")
+                try SMAppService.mainApp.unregister()
+                print("开机启动取消注册成功")
+            }
+        } catch {
+            print("设置开机启动失败: \(error)")
+            print("错误详情: \(error.localizedDescription)")
+        }
+        
+        // 检查当前状态
+        let status = SMAppService.mainApp.status
+        print("当前开机启动状态: \(status)")
     }
     
     private func clearClipboardHistory() {

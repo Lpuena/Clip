@@ -53,7 +53,7 @@ struct ClipApp: App {
     
     // 添加这个新函数
     private func requestNotificationPermission() {
-        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound, .badge]) { granted, error in
             DispatchQueue.main.async {
                 if granted {
                     print("通知权限已获得")
@@ -61,7 +61,7 @@ struct ClipApp: App {
                 } else {
                     print("通知权限被拒绝")
                     if let error = error {
-                        print("获取通知权限时出错: \(error)")
+                        print("获取通知权限时出错: \(error.localizedDescription)")
                     }
                 }
             }
@@ -180,7 +180,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
     @Published var isPopoverShown: Bool = false
 
     override init() {
-        print("AppDelegate 初始化始")
+        print("AppDelegate ���始化始")
         self.clipboardManager = ClipboardManager()
         self.hotKeyManager = HotKeyManager(hotKey: HotKey(keyCombo: KeyCombo(key: .f4)), keyDownHandler: nil)
         print("ClipboardManager 和 HotKeyManager 初始化完成")
@@ -372,7 +372,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNoti
                 previousApp.activate(options: .activateIgnoringOtherApps)
                 print("焦点已返回到之前的应用：\(previousApp.localizedName ?? "未知应用")")
             } else {
-                print("没有之前的应用信息，无法返回焦点")
+                print("没有之前的应用信息，无法返回���点")
             }
             self.previousActiveApp = nil
         }
