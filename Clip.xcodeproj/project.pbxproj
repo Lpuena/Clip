@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB4EF8252C8C0A4200E3E6BA /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF8242C8C0A4200E3E6BA /* ImageProcessing.swift */; };
+		DB4EF8292C8C0E5500E3E6BA /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF8282C8C0E5500E3E6BA /* ClipboardItem.swift */; };
+		DB4EF82B2C8C0E6900E3E6BA /* ClipboardItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF82A2C8C0E6900E3E6BA /* ClipboardItemView.swift */; };
 		DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BA3262C8A938B007EC50B /* settingsView.swift */; };
 		DB928DE82C8A8E3E0064A5BF /* ClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */; };
 		DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE92C8A8E3E0064A5BF /* ContentView.swift */; };
@@ -16,6 +19,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		DB4EF8242C8C0A4200E3E6BA /* ImageProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
+		DB4EF8282C8C0E5500E3E6BA /* ClipboardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItem.swift; sourceTree = "<group>"; };
+		DB4EF82A2C8C0E6900E3E6BA /* ClipboardItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItemView.swift; sourceTree = "<group>"; };
 		DB6BA3262C8A938B007EC50B /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
 		DB928DE42C8A8E3E0064A5BF /* Clip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipApp.swift; sourceTree = "<group>"; };
@@ -62,12 +68,15 @@
 			isa = PBXGroup;
 			children = (
 				DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */,
+				DB4EF8242C8C0A4200E3E6BA /* ImageProcessing.swift */,
 				DB928DE92C8A8E3E0064A5BF /* ContentView.swift */,
 				DB928DEB2C8A8E3E0064A5BF /* Item.swift */,
 				DB928DED2C8A8E400064A5BF /* Assets.xcassets */,
 				DB928DF22C8A8E400064A5BF /* Clip.entitlements */,
 				DB928DEF2C8A8E400064A5BF /* Preview Content */,
 				DB6BA3262C8A938B007EC50B /* settingsView.swift */,
+				DB4EF8282C8C0E5500E3E6BA /* ClipboardItem.swift */,
+				DB4EF82A2C8C0E6900E3E6BA /* ClipboardItemView.swift */,
 			);
 			path = Clip;
 			sourceTree = "<group>";
@@ -169,10 +178,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB4EF8252C8C0A4200E3E6BA /* ImageProcessing.swift in Sources */,
+				DB4EF82B2C8C0E6900E3E6BA /* ClipboardItemView.swift in Sources */,
 				DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */,
 				DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */,
 				DB928DEC2C8A8E3E0064A5BF /* Item.swift in Sources */,
 				DB928DE82C8A8E3E0064A5BF /* ClipApp.swift in Sources */,
+				DB4EF8292C8C0E5500E3E6BA /* ClipboardItem.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
