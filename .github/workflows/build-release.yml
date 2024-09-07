@@ -20,7 +20,7 @@ jobs:
       - name: Install dependencies
         run: |
           # 如果你的项目使用 CocoaPods，运行 pod install
-          pod install
+          # pod install
           # 如果你的项目使用 Swift Package Manager，Xcode 会自动处理依赖
 
       - name: Build project
