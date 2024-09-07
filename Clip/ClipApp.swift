@@ -9,6 +9,7 @@ import SwiftUI
 import AppKit
 import ServiceManagement
 import HotKey
+import UserNotifications
 
 // MARK: - Main App Structure
 @main
@@ -21,6 +22,9 @@ struct ClipApp: App {
         NSApplication.shared.setActivationPolicy(.accessory)
         print("应用程序设置为后台运行模式")
         print("ClipApp 初始化完成")
+        
+        // 请求通知权限
+        requestNotificationPermission()
     }
     
     var body: some Scene {
@@ -40,6 +44,52 @@ struct ClipApp: App {
             CommandGroup(replacing: .help, addition: {})
         }
         .environmentObject(clipboardManager)
+    }
+    
+    // 添加这个新函数
+    private func requestNotificationPermission() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .sound]) { granted, error in
+            DispatchQueue.main.async {
+                if granted {
+                    print("通知权限已获得")
+                    self.checkNotificationSettings()
+                } else {
+                    print("通知权限被拒绝")
+                    if let error = error {
+                        print("获取通知权限时出错: \(error)")
+                    }
+                }
+            }
+        }
+    }
+
+    private func checkNotificationSettings() {
+        UNUserNotificationCenter.current().getNotificationSettings { settings in
+            print("通知设置:")
+            print("授权状态: \(settings.authorizationStatus.rawValue)")
+            print("警告设置: \(settings.alertSetting.rawValue)")
+            print("声音设置: \(settings.soundSetting.rawValue)")
+            print("标记设置: \(settings.badgeSetting.rawValue)")
+            print("通知中心设置: \(settings.notificationCenterSetting.rawValue)")
+            print("锁定屏幕设置: \(settings.lockScreenSetting.rawValue)")
+            print("临界通知设置: \(settings.criticalAlertSetting.rawValue)")
+            print("预览设置: \(settings.alertStyle.rawValue)")
+            
+            if #available(macOS 11.0, *) {
+                print("时间敏感设置: \(settings.timeSensitiveSetting.rawValue)")
+            }
+            
+            if #available(macOS 12.0, *) {
+                print("调度设置: \(settings.scheduledDeliverySetting.rawValue)")
+            }
+            
+            // 检查是否允许通知
+            if settings.authorizationStatus == .authorized {
+                print("通知已被允许")
+            } else {
+                print("通知未被允许，当前状态: \(settings.authorizationStatus)")
+            }
+        }
     }
 }
 
@@ -109,7 +159,7 @@ class ClipboardManager: ObservableObject {
 }
 
 // MARK: - App Delegate
-class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
+class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, UNUserNotificationCenterDelegate {
     var statusItem: NSStatusItem?
     var popover: NSPopover?
     var timer: Timer?
@@ -147,6 +197,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         updateAppearance()
         startMonitoringClipboard()
         setupEventMonitor()
+        UNUserNotificationCenter.current().delegate = self
         print("applicationDidFinishLaunching 完成")
     }
     
@@ -170,7 +221,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         })
         .environmentObject(clipboardManager)
         
-        // 使用可选绑定来安全地访问 currentAppearance
+        // 使用可选绑定��安全地访问 currentAppearance
         if let currentAppearance = currentAppearance {
             contentView.environment(\.colorScheme, currentAppearance.name == .darkAqua ? .dark : .light)
         }
@@ -245,7 +296,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             if let image = NSImage(systemSymbolName: "clipboard", accessibilityDescription: "Clipboard History") {
                 image.isTemplate = true
                 button.image = image
-                print("设置状态栏图标为模板像")
+                print("设置状态栏图标为模板图像")
             }
         }
     }
@@ -351,11 +402,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     func openSettings() {
         if settingsWindow == nil {
             settingsWindow = NSWindow(
-                contentRect: NSRect(x: 100, y: 100, width: 350, height: 400),
+                contentRect: NSRect(x: 100, y: 100, width: 350, height: 450),
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],
                 backing: .buffered,
                 defer: false)
-            settingsWindow?.title = "设置"
+            settingsWindow?.title = "Clip 设置"  // 设置窗口标题
             settingsWindow?.center()
             settingsWindow?.contentView = NSHostingView(rootView: 
                 SettingsView(hotKeyManager: hotKeyManager)
@@ -403,6 +454,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         } else {
             print("window: nil")
         }
+    }
+
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner, .sound])
     }
 }
 
