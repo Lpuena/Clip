@@ -71,19 +71,16 @@ struct ClipboardItemView: View {
                         .foregroundColor(colorScheme == .dark ? .white : .primary)
                 }
             case .image:
-                if let imageWrapper = item.content as? ImageWrapper,
-                   let image = imageWrapper.image {
-                    Image(nsImage: image)
+                if let imageWrapper = item.content as? ImageWrapper {
+                    Image(nsImage: imageWrapper.image)
                         .resizable()
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 60)
                 }
             case .multipleImages:
-                if let imageWrappers = item.content as? [ImageWrapper],
-                   let firstImageWrapper = imageWrappers.first,
-                   let firstImage = firstImageWrapper.image {
+                if let imageWrappers = item.content as? [ImageWrapper], let firstImageWrapper = imageWrappers.first {
                     HStack {
-                        Image(nsImage: firstImage)
+                        Image(nsImage: firstImageWrapper.image)
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(height: 60)

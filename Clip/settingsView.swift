@@ -171,28 +171,11 @@ struct SettingsView: View {
     }
     
     private func clearClipboardHistory() {
-        let beforeMemory = reportMemoryUsage()
         clipboardManager.clearHistory()
         print("剪贴板历史已清空")
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            let afterMemory = self.reportMemoryUsage()
-            print("内存使用变化: \(beforeMemory - afterMemory) MB")
             self.sendUserNotification()
         }
-    }
-    
-    private func reportMemoryUsage() -> Double {
-        var taskInfo = task_vm_info_data_t()
-        var count = mach_msg_type_number_t(MemoryLayout<task_vm_info>.size) / 4
-        let result: kern_return_t = withUnsafeMutablePointer(to: &taskInfo) {
-            $0.withMemoryRebound(to: integer_t.self, capacity: Int(count)) {
-                task_info(mach_task_self_, task_flavor_t(TASK_VM_INFO), $0, &count)
-            }
-        }
-        
-        let usedMB = Double(taskInfo.phys_footprint) / 1048576.0
-        print("当前内存使用: \(usedMB) MB")
-        return usedMB
     }
     
     private func sendUserNotification() {

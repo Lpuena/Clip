@@ -34,16 +34,14 @@ struct ClipboardItem: Identifiable, Equatable {
         // 尝试读取多图
         if let images = ImageProcessing.readMultipleImagesFromPasteboard(pasteboard) {
             print("从剪贴板读取到多张图片，数量：\(images.count)")
-            let wrappedImages = images.compactMap { ImageWrapper(image: $0) }
+            let wrappedImages = images.map { ImageWrapper(image: $0) }
             return ClipboardItem(type: .multipleImages, content: wrappedImages, timestamp: Date(), sourceApp: sourceApp)
         }
         
         // 尝试读取单张图片
         if let image = ImageProcessing.readImageFromPasteboard(pasteboard) {
             print("从剪贴板读取到单张图片，尺寸：\(image.size)")
-            if let wrapper = ImageWrapper(image: image) {
-                return ClipboardItem(type: .image, content: wrapper, timestamp: Date(), sourceApp: sourceApp)
-            }
+            return ClipboardItem(type: .image, content: ImageWrapper(image: image), timestamp: Date(), sourceApp: sourceApp)
         }
         
         // 尝试读取文本
@@ -70,10 +68,10 @@ struct ClipboardItem: Identifiable, Equatable {
             }
             return false
         case .multipleImages:
-            if let selfImages = (self.content as? [ImageWrapper])?.compactMap({ $0.image }),
-               let otherImages = (other.content as? [ImageWrapper])?.compactMap({ $0.image }),
+            if let selfImages = (self.content as? [ImageWrapper])?.map({ $0.image }),
+               let otherImages = (other.content as? [ImageWrapper])?.map({ $0.image }),
                selfImages.count == otherImages.count {
-                return zip(selfImages, otherImages).allSatisfy { ImageProcessing.compareImages($0, $1) }
+                return zip(selfImages, otherImages).allSatisfy(ImageProcessing.compareImages)
             }
             return false
         }
@@ -88,39 +86,26 @@ struct ClipboardItem: Identifiable, Equatable {
                 pasteboard.setString(text, forType: .string)
             }
         case .image:
-            if let imageWrapper = content as? ImageWrapper, let image = imageWrapper.image {
-                pasteboard.writeObjects([image])
+            if let imageWrapper = content as? ImageWrapper {
+                pasteboard.writeObjects([imageWrapper.image])
             }
         case .multipleImages:
             if let imageWrappers = content as? [ImageWrapper] {
-                let images = imageWrappers.compactMap { $0.image }
-                pasteboard.writeObjects(images)
+                pasteboard.writeObjects(imageWrappers.map { $0.image })
             }
         }
     }
 }
 
 class ImageWrapper: NSObject, NSCopying {
-    private let imageData: Data
-    private var cachedImage: NSImage?
+    let image: NSImage
     
-    var image: NSImage? {
-        if cachedImage == nil {
-            cachedImage = NSImage(data: imageData)
-        }
-        return cachedImage
-    }
-    
-    init?(image: NSImage) {
-        guard let tiffRepresentation = image.tiffRepresentation,
-              let bitmapImage = NSBitmapImageRep(data: tiffRepresentation),
-              let data = bitmapImage.representation(using: .png, properties: [:]) else {
-            return nil
-        }
-        self.imageData = data
+    init(image: NSImage) {
+        self.image = image
     }
     
     func copy(with zone: NSZone? = nil) -> Any {
+        // 返回同一个实例，而不是创建新的副本
         return self
     }
 }
