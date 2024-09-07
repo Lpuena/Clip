@@ -10,6 +10,8 @@
 		DB4EF8252C8C0A4200E3E6BA /* ImageProcessing.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF8242C8C0A4200E3E6BA /* ImageProcessing.swift */; };
 		DB4EF8292C8C0E5500E3E6BA /* ClipboardItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF8282C8C0E5500E3E6BA /* ClipboardItem.swift */; };
 		DB4EF82B2C8C0E6900E3E6BA /* ClipboardItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF82A2C8C0E6900E3E6BA /* ClipboardItemView.swift */; };
+		DB4EF82E2C8C163F00E3E6BA /* HotKey in Frameworks */ = {isa = PBXBuildFile; productRef = DB4EF82D2C8C163F00E3E6BA /* HotKey */; };
+		DB4EF8302C8C185500E3E6BA /* HotKeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB4EF82F2C8C185500E3E6BA /* HotKeyManager.swift */; };
 		DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB6BA3262C8A938B007EC50B /* settingsView.swift */; };
 		DB928DE82C8A8E3E0064A5BF /* ClipApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */; };
 		DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB928DE92C8A8E3E0064A5BF /* ContentView.swift */; };
@@ -22,6 +24,7 @@
 		DB4EF8242C8C0A4200E3E6BA /* ImageProcessing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageProcessing.swift; sourceTree = "<group>"; };
 		DB4EF8282C8C0E5500E3E6BA /* ClipboardItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItem.swift; sourceTree = "<group>"; };
 		DB4EF82A2C8C0E6900E3E6BA /* ClipboardItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipboardItemView.swift; sourceTree = "<group>"; };
+		DB4EF82F2C8C185500E3E6BA /* HotKeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotKeyManager.swift; sourceTree = "<group>"; };
 		DB6BA3262C8A938B007EC50B /* settingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = settingsView.swift; sourceTree = "<group>"; };
 		DB928DE42C8A8E3E0064A5BF /* Clip.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Clip.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DB928DE72C8A8E3E0064A5BF /* ClipApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipApp.swift; sourceTree = "<group>"; };
@@ -30,9 +33,6 @@
 		DB928DED2C8A8E400064A5BF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DB928DF02C8A8E400064A5BF /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		DB928DF22C8A8E400064A5BF /* Clip.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Clip.entitlements; sourceTree = "<group>"; };
-		DB928DFB2C8A8E400064A5BF /* ClipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipTests.swift; sourceTree = "<group>"; };
-		DB928E052C8A8E400064A5BF /* ClipUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipUITests.swift; sourceTree = "<group>"; };
-		DB928E072C8A8E400064A5BF /* ClipUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClipUITestsLaunchTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB4EF82E2C8C163F00E3E6BA /* HotKey in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -50,8 +51,6 @@
 			isa = PBXGroup;
 			children = (
 				DB928DE62C8A8E3E0064A5BF /* Clip */,
-				DB928DFA2C8A8E400064A5BF /* ClipTests */,
-				DB928E042C8A8E400064A5BF /* ClipUITests */,
 				DB928DE52C8A8E3E0064A5BF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -77,6 +76,7 @@
 				DB6BA3262C8A938B007EC50B /* settingsView.swift */,
 				DB4EF8282C8C0E5500E3E6BA /* ClipboardItem.swift */,
 				DB4EF82A2C8C0E6900E3E6BA /* ClipboardItemView.swift */,
+				DB4EF82F2C8C185500E3E6BA /* HotKeyManager.swift */,
 			);
 			path = Clip;
 			sourceTree = "<group>";
@@ -87,23 +87,6 @@
 				DB928DF02C8A8E400064A5BF /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		DB928DFA2C8A8E400064A5BF /* ClipTests */ = {
-			isa = PBXGroup;
-			children = (
-				DB928DFB2C8A8E400064A5BF /* ClipTests.swift */,
-			);
-			path = ClipTests;
-			sourceTree = "<group>";
-		};
-		DB928E042C8A8E400064A5BF /* ClipUITests */ = {
-			isa = PBXGroup;
-			children = (
-				DB928E052C8A8E400064A5BF /* ClipUITests.swift */,
-				DB928E072C8A8E400064A5BF /* ClipUITestsLaunchTests.swift */,
-			);
-			path = ClipUITests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -122,6 +105,9 @@
 			dependencies = (
 			);
 			name = Clip;
+			packageProductDependencies = (
+				DB4EF82D2C8C163F00E3E6BA /* HotKey */,
+			);
 			productName = Clip;
 			productReference = DB928DE42C8A8E3E0064A5BF /* Clip.app */;
 			productType = "com.apple.product-type.application";
@@ -151,6 +137,7 @@
 			);
 			mainGroup = DB928DDB2C8A8E3E0064A5BF;
 			packageReferences = (
+				DB4EF82C2C8C163F00E3E6BA /* XCRemoteSwiftPackageReference "HotKey" */,
 			);
 			productRefGroup = DB928DE52C8A8E3E0064A5BF /* Products */;
 			projectDirPath = "";
@@ -183,6 +170,7 @@
 				DB928DEA2C8A8E3E0064A5BF /* ContentView.swift in Sources */,
 				DB6BA3272C8A938B007EC50B /* settingsView.swift in Sources */,
 				DB928DEC2C8A8E3E0064A5BF /* Item.swift in Sources */,
+				DB4EF8302C8C185500E3E6BA /* HotKeyManager.swift in Sources */,
 				DB928DE82C8A8E3E0064A5BF /* ClipApp.swift in Sources */,
 				DB4EF8292C8C0E5500E3E6BA /* ClipboardItem.swift in Sources */,
 			);
@@ -393,6 +381,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		DB4EF82C2C8C163F00E3E6BA /* XCRemoteSwiftPackageReference "HotKey" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/soffes/HotKey";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		DB4EF82D2C8C163F00E3E6BA /* HotKey */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = DB4EF82C2C8C163F00E3E6BA /* XCRemoteSwiftPackageReference "HotKey" */;
+			productName = HotKey;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = DB928DDC2C8A8E3E0064A5BF /* Project object */;
 }

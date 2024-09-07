@@ -8,6 +8,7 @@
 import SwiftUI
 import AppKit
 import ServiceManagement
+import HotKey
 
 // MARK: - Main App Structure
 @main
@@ -17,7 +18,6 @@ struct ClipApp: App {
     
     init() {
         print("ClipApp 初始化开始")
-        // 直接设置应用程序为后台运行模式，不需要可选绑定
         NSApplication.shared.setActivationPolicy(.accessory)
         print("应用程序设置为后台运行模式")
         print("ClipApp 初始化完成")
@@ -78,7 +78,7 @@ class ClipboardManager: ObservableObject {
     func updateClipboardHistory(sourceApp: (name: String, bundleIdentifier: String)? = nil) {
         print("开始更新剪贴板历史")
         if let newItem = ClipboardItem.fromPasteboard(sourceApp: sourceApp) {
-            print("创建了新的剪贴板项：\(newItem.type)")
+            print("创建了的剪贴板项：\(newItem.type)")
             if !clipboardItems.contains(where: { $0.isContentEqual(to: newItem) }) {
                 clipboardItems.insert(newItem, at: 0)
                 trimClipboardItems()
@@ -120,12 +120,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     
     @Published var currentAppearance: NSAppearance?
     
+    @Published var hotKeyManager: HotKeyManager
+    
+    @Published var isPopoverShown: Bool = false
+
     override init() {
-        print("AppDelegate 初始化开始")
+        print("AppDelegate 初始化始")
         self.clipboardManager = ClipboardManager()
-        print("ClipboardManager 初始化完成")
+        self.hotKeyManager = HotKeyManager(hotKey: HotKey(keyCombo: KeyCombo(key: .f4)), keyDownHandler: nil)
+        print("ClipboardManager 和 HotKeyManager 初始化完成")
         super.init()
         print("AppDelegate super.init() 完成")
+        
+        // 在 super.init() 之后设置 keyDownHandler
+        self.hotKeyManager.keyDownHandler = { [weak self] in
+            self?.togglePopover(nil)
+        }
+        
         print("AppDelegate 初始化完成")
     }
     
@@ -139,12 +150,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         print("applicationDidFinishLaunching 完成")
     }
     
-    // 其他方法保持不变，但可以考虑将它们分组到扩展中
-}
-
-// MARK: - App Delegate Extensions
-extension AppDelegate {
-    // UI Setup Methods
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         if let button = statusItem?.button {
@@ -248,72 +253,72 @@ extension AppDelegate {
     // Popover Control Methods
     @objc func togglePopover(_ sender: AnyObject?) {
         print("togglePopover 被调用")
-        if let button = statusItem?.button {
-            if popover?.isShown == true {
-                print("Popover 已显示，准备关闭")
-                closePopover(sender)
-            } else {
-                print("Popover 未示，准备打开")
-                showPopover(button)
-            }
+        if isPopoverShown {
+            print("Popover 当前显示，准备关闭")
+            closePopover(sender)
         } else {
-            print("无法获取 statusItem 按钮")
+            print("Popover 当前未显示，准备打开")
+            showPopover(sender)
         }
     }
     
     func showPopover(_ sender: Any?) {
         print("showPopover 被调用")
-        if let button = statusItem?.button {
-            previousActiveApp = NSWorkspace.shared.frontmostApplication
-            print("显示 Popover，当前外观: \(currentAppearance?.name.rawValue ?? "nil")")
-            clipboardManager.selectedItemId = nil
-            updateAppearance()
-            updatePopoverContentWithoutReopening()
-            
-            if popover?.isShown == false {
-                print("Popover 未显示，准备显示")
-                popover?.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
-                print("Popover 显示完成")
-            } else {
-                print("Popover 已经在显示状态")
-            }
-            
-            NSApp.activate(ignoringOtherApps: true)
-        } else {
-            print("无法获取 statusItem 按钮")
-        }
+        previousActiveApp = NSWorkspace.shared.frontmostApplication
+        print("显示 Popover，当前外观: \(currentAppearance?.name.rawValue ?? "nil")")
+        clipboardManager.selectedItemId = nil
+        updateAppearance()
+        updatePopoverContentWithoutReopening()
         
-        checkPopoverStatus()
+        if let popover = popover {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                if let button = self.statusItem?.button {
+                    popover.show(relativeTo: button.bounds, of: button, preferredEdge: .minY)
+                } else {
+                    // 如果 statusItem 按钮不可用，在屏幕中央显示 popover
+                    if let screen = NSScreen.main {
+                        let rect = NSRect(x: screen.frame.width / 2, y: screen.frame.height / 2, width: 1, height: 1)
+                        let window = NSWindow(contentRect: rect, styleMask: [], backing: .buffered, defer: true)
+                        window.makeKeyAndOrderFront(nil)
+                        popover.show(relativeTo: rect, of: window.contentView!, preferredEdge: .minY)
+                    }
+                }
+                self.isPopoverShown = true
+                print("Popover 显示完成")
+                NSApp.activate(ignoringOtherApps: true)
+                self.checkPopoverStatus()
+            }
+        } else {
+            print("Popover 对象为空，无法显示")
+        }
     }
     
     @objc func closePopover(_ sender: Any?) {
         print("AppDelegate 正在关闭弹出窗口")
-        if popover?.isShown == true {
-            popover?.performClose(sender)
-            print("弹出窗口已关闭")
+        if let popover = popover, isPopoverShown {
+            DispatchQueue.main.async { [weak self] in
+                guard let self = self else { return }
+                popover.performClose(sender)
+                self.isPopoverShown = false
+                print("弹出窗口已关闭")
+                self.returnFocusToPreviousApp()
+            }
         } else {
-            print("弹出窗口已经是关闭状态")
-        }
-        returnFocusToPreviousApp()
-    }
-    
-    func closePopoverAndReturnFocus() {
-        DispatchQueue.main.async { [weak self] in
-            self?.closePopover(nil)
-            self?.returnFocusToPreviousApp()
-            print("Popover 已关闭并返回点")
+            print("弹出窗口已经是关闭状态或不存在")
         }
     }
-    
+
     func returnFocusToPreviousApp() {
         DispatchQueue.main.async { [weak self] in
-            if let previousApp = self?.previousActiveApp {
+            guard let self = self else { return }
+            if let previousApp = self.previousActiveApp {
                 previousApp.activate(options: .activateIgnoringOtherApps)
                 print("焦点已返回到之前的应用：\(previousApp.localizedName ?? "未知应用")")
             } else {
-                print("没有之前的应用信，无法返回焦点")
+                print("没有之前的应用信息，无法返回焦点")
             }
-            self?.previousActiveApp = nil
+            self.previousActiveApp = nil
         }
     }
     
@@ -346,14 +351,14 @@ extension AppDelegate {
     func openSettings() {
         if settingsWindow == nil {
             settingsWindow = NSWindow(
-                contentRect: NSRect(x: 100, y: 100, width: 350, height: 350),
+                contentRect: NSRect(x: 100, y: 100, width: 350, height: 400),
                 styleMask: [.titled, .closable, .miniaturizable, .resizable],
                 backing: .buffered,
                 defer: false)
             settingsWindow?.title = "设置"
             settingsWindow?.center()
             settingsWindow?.contentView = NSHostingView(rootView: 
-                SettingsView()
+                SettingsView(hotKeyManager: hotKeyManager)
                     .environmentObject(clipboardManager)
             )
             
@@ -507,7 +512,7 @@ struct ClipboardHistoryView: View {
         }
         // 立即关闭 popover 并返回焦点
         if let appDelegate = appDelegate {
-            appDelegate.closePopoverAndReturnFocus()
+            appDelegate.closePopover(nil)
         } else {
             // 如果 appDelegate 为 nil，我们可以尝试直接关闭 popover
             NSApp.sendAction(#selector(AppDelegate.closePopover(_:)), to: nil, from: nil)
