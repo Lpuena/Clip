@@ -1,0 +1,43 @@
+name: Build and Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: '15.4'  # 根据你的 Xcode 版本调整
+
+      - name: Install dependencies
+        run: |
+          # 如果你的项目使用 CocoaPods，运行 pod install
+          pod install
+          # 如果你的项目使用 Swift Package Manager，Xcode 会自动处理依赖
+
+      - name: Build project
+        run: xcodebuild -workspace YourProject.xcworkspace -scheme YourScheme -configuration Release build
+
+      - name: Archive project
+        run: xcodebuild -workspace YourProject.xcworkspace -scheme YourScheme -configuration Release archive -archivePath $PWD/build/YourProject.xcarchive
+
+      - name: Export IPA
+        run: xcodebuild -exportArchive -archivePath $PWD/build/YourProject.xcarchive -exportPath $PWD/build/output -exportOptionsPlist exportOptions.plist
+
+      - name: Upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./build/output/YourProject.ipa
+          asset_name: YourProject.ipa
+          asset_content_type: application/octet-stream
